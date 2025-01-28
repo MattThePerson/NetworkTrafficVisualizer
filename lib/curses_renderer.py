@@ -1,3 +1,4 @@
+from typing import Any, Callable
 import sys
 
 try:
@@ -21,11 +22,10 @@ class CursesRenderer():
         curses.curs_set(0)
         self.screen.nodelay(True)
         self.screen.timeout(1)
-        self.screen.addstr(0, 0, 'HELLOOOO')
         self.rows, self.cols = self.screen.getmaxyx()
-        self.updates_count = 0
+        self.updates_count = 0 # REMOVE!!!
     
-    def handle_input(self, toggle_pause_func, stop_app_func):
+    def handle_input(self, toggle_pause_func: Callable[..., Any], stop_app_func: Callable[..., Any]):
         key = self.screen.getch()
         if key == ord('q'):
             stop_app_func()
@@ -50,18 +50,18 @@ class CursesRenderer():
     
     #region renderers
     
-    def render_screen(self, state):
+    def render_screen(self, state: Any):
         self.screen.addstr(1, 0, "size: " + str((self.rows, self.cols)))
         self.screen.addstr(2, 0, "Try Russian text: Привет")
         self.screen.addstr(3, 0, str(self.updates_count))
         self.screen.addstr(4, 0, str(len(state.packets)))
         
         for idx, packet in enumerate(state.packets[-30:]):
-            self.screen.addstr(6+idx, 0, packet.summary())
+            self.screen.addstr(6+idx, 0, packet['summary'])
         
         self.updates_count += 1
 
-    def render_header(self, render_state):
+    def render_header(self, render_state: dict[str, Any]):
         ...
     
     def render_footer(self):
@@ -77,7 +77,7 @@ class CursesRenderer():
 
     #region helpers
     
-    def putstr(self, *args):
+    def putstr(self, *args: Any):
         self.screen.addstr(*args)
     
     #endregion

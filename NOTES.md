@@ -17,10 +17,18 @@ BOTTOM BAR:
 - showing most recent 'renewed' away ip address
 
 CONTROLS:
-- `p` to pause/unpause
-- `t` toggle text mode
-- `d` show debug menu
-- `ctrl+r` refresh
+- `p` to pause/unpause rendering (capturing still continues)
+- `t` toggle modes
+- `m + num` to select mode
+- `d` toggle debug menu
+- `s + speed` to set speed
+- `ctrl+r` reset/restart capturing
+
+MODES:
+- default 'grouping' mode
+- 'cascading' mode, new packets on subsequenc lines
+- ports mode (show port traffic with blinking lights)
+- highest traffic ips mode
 
 QUESTIONS:
 - What about interfaces? how to show? LEARN
@@ -51,3 +59,11 @@ QUESTIONS:
 --pcap  // Export to a .pcap file for later analysis in Wireshark
 --list-ifs
 --simulate-log  // reads packets from log file and simulates their arrival
+
+
+
+# PORTS MODE
+- number of ports = 65_536 == 2^16 == 0x10000
+- eg. 64 pages of 1024 ports each
+- size of terminal in vertical = 96x116
+- 52x210

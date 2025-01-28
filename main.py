@@ -1,5 +1,6 @@
+from typing import Any
 import argparse
-import multiprocessing
+from multiprocessing import Process, Queue
 import signal
 from lib import AppState
 from lib import CursesRenderer
@@ -9,13 +10,14 @@ from lib import packet_sniffer
 
 
 # MAIN
-def main(args):
+def main(args: argparse.Namespace):
     
     app = App(ups_target=60)
     state = AppState()
     renderer = CursesRenderer()
-    queue = multiprocessing.Queue() # messages from sniffer process
-    sniffer_process = multiprocessing.Process(
+    
+    queue: Queue[Any] = Queue() # messages from sniffer process
+    sniffer_process = Process(
         target=packet_sniffer,
         args=(queue,)
     )
@@ -31,7 +33,7 @@ def main(args):
     while app.running():
         
         while not queue.empty():
-            state.add_packet(queue.get_nowait())
+            state.add_packet(queue.get_nowait()) # why nowait?
         
         if not app.paused:
             state.update() # pass in app.time() ?

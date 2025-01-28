@@ -1,13 +1,14 @@
-from dataclasses import dataclass
+from typing import Any
 
-@dataclass
+
 class AppState:
     
-    packets = []
-    exchange_objects = []
-    relationships = []
+    def __init__(self):
+        self.packets: list[dict[str, Any]] = []
+        self.exchange_objects = []
+        self.relationships = []
     
-    def add_packet(self, packet):
+    def add_packet(self, packet: dict[str, Any]):
         self.packets.append(packet)
     
     def update(self):
