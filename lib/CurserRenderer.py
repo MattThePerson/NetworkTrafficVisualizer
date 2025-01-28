@@ -36,13 +36,13 @@ class CursesRenderer():
         
         self.updates_count += 1
     
-    def handle_input(self, app_state, render_state):
+    def handle_input(self):
         ...
     
     def refresh(self):
         self.screen.refresh()
     
-    def update_header(self):
+    def update_header(self, render_state):
         ...
     
     def update_footer(self):

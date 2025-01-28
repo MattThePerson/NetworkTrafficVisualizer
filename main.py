@@ -1,5 +1,77 @@
 import argparse
-from App import App
+import multiprocessing
+import signal
+import time
+import scapy.all as scapy
+import sys
+
+from lib import AppState
+from lib import CursesRenderer
+from lib import App
+
+
+### CALLBACK FUNCTIONS ###
+
+def keyboard_interrupt_handler(sig, frame, process, renderer):
+    print("Keyboard interrupt received. Closing the sniffer...")
+    process.terminate()
+    process.join()
+    print("Sniffer process terminated.")
+    renderer.end()
+    sys.exit(0)
+
+
+def handle_packet(packet, queue):
+    # print(packet.summary())
+    queue.put(packet)
+
+
+def packet_sniffer(queue):
+    scapy.sniff(
+        prn=lambda packet: handle_packet(packet, queue),
+        store=False,
+        filter=None,
+        iface=None,
+    )
+
+
+# MAIN
+def main(args):
+    
+    app = App(ups_target=60)
+    state = AppState()
+    renderer = CursesRenderer()
+    queue = multiprocessing.Queue() # messages from sniffer process
+    sniffer_process = multiprocessing.Process(target=packet_sniffer, args=(queue,))
+
+    signal.signal(signal.SIGINT, lambda sig, frame: keyboard_interrupt_handler(sig, frame, sniffer_process, renderer))
+    
+    # start shit
+    sniffer_process.start()
+    renderer.init()
+    app.start()
+    
+    # update loop
+    while app.running():
+        
+        while not queue.empty():
+            state.add_packet(queue.get_nowait())
+        
+        state.update() # updates app state
+
+        renderer.update(state) # 
+        renderer.update_header(app.getRenderState()) # app state
+        renderer.update_footer()
+        
+        renderer.handle_input()
+        renderer.refresh() 
+        
+        app.sleep()
+
+    sniffer_process.join() # doesnt reach here
+    print('\nHEY, YOU REACHED ME!!!\n')
+
+
 
 
 if __name__ == '__main__':
@@ -31,4 +103,4 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
     print('running App ...')
-    App(args)
+    main(args)
