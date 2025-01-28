@@ -11,6 +11,12 @@ except ImportError:
     else:
         raise
 
+# CRAP
+some_colors = [curses.COLOR_RED, curses.COLOR_GREEN,
+            curses.COLOR_YELLOW, curses.COLOR_BLUE, curses.COLOR_MAGENTA,
+            curses.COLOR_CYAN, curses.COLOR_WHITE]
+
+
 
 class CursesRenderer():
     
@@ -19,11 +25,15 @@ class CursesRenderer():
     def init(self):
         self.initialized = True
         self.screen = curses.initscr()
+        curses.start_color()
         curses.curs_set(0)
         self.screen.nodelay(True)
         self.screen.timeout(1)
         self.rows, self.cols = self.screen.getmaxyx()
         self.updates_count = 0 # REMOVE!!!
+        
+        # self.colors = [ curses.init_pair(i, i, i) for i in range(1, 10) ]
+        self.colors = [ curses.init_pair(i+1, col, curses.COLOR_BLACK) for i, col in enumerate(some_colors) ]
     
     def handle_input(self, toggle_pause_func: Callable[..., Any], stop_app_func: Callable[..., Any]):
         key = self.screen.getch()
@@ -54,10 +64,11 @@ class CursesRenderer():
         self.screen.addstr(1, 0, "size: " + str((self.rows, self.cols)))
         self.screen.addstr(2, 0, "Try Russian text: Привет")
         self.screen.addstr(3, 0, str(self.updates_count))
-        self.screen.addstr(4, 0, str(len(state.packets)))
+        self.screen.addstr(4, 0, str(len(state.exchange_objects)))
         
-        for idx, packet in enumerate(state.packets[-30:]):
-            self.screen.addstr(6+idx, 0, packet['summary'])
+        for idx, eo in enumerate(state.exchange_objects[-90:]):
+            color_pair_num = idx % len(self.colors) + 1
+            self.screen.addstr(6+idx, 0, eo['show_data'][:self.cols], curses.color_pair(color_pair_num))
         
         self.updates_count += 1
 

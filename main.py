@@ -63,6 +63,7 @@ def gui_mode(app: App, state: AppState, renderer: CursesRenderer, sniffer_messag
         
         if app.show_debug_menu:
             renderer.render_debug_menu()
+        
         renderer.refresh()
         renderer.handle_input(toggle_pause_func=app.togglePause, stop_app_func=app.stop) # pause, refresh (state), toggle mode
         
