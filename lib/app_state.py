@@ -14,7 +14,7 @@ class AppState:
         self.relationships: list[dict[str, Any]] = []
         self.used_colors = []
         
-        self.packet_speed = 60 # chars / s
+        self.packet_speed = 120 # chars / s
     
     def add_packet(self, packet: dict[str, Any]):
         idx = self.add_packet_to_memory(packet)

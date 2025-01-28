@@ -1,4 +1,5 @@
 from typing import Any
+import numpy as np
 import time
 
 class App:
@@ -10,9 +11,10 @@ class App:
         self.show_debug_menu = False
         self.update_count = 0
         
-        self.start_time: float
+        self.start_time: float = 0
         self.last_wakeup_time: float
-        self.update_time_taken: float
+        self.compute_tt_arr: list[float] = [0] # time taken in seconds to
+        self.compute_tt_mean: float = 0
 
 
     def start(self):
@@ -28,8 +30,13 @@ class App:
 
 
     def sleep(self):
-        self.update_time_taken = time.time() - self.last_wakeup_time
-        time_left = 1/self.ups_target - self.update_time_taken
+        comp_tt = time.time() - self.last_wakeup_time
+        self.compute_tt_arr.append(comp_tt)
+        if len(self.compute_tt_arr) > 5: # rolling mean window size
+            self.compute_tt_arr.pop(0)
+        self.compute_tt_mean = float(np.mean(self.compute_tt_arr))
+
+        time_left = 1/self.ups_target - comp_tt
         if time_left > 0:
             time.sleep(time_left)
         self.last_wakeup_time = time.time()
@@ -37,8 +44,3 @@ class App:
 
     def togglePause(self):
         self.paused = not self.paused
-
-
-    # GETTERS
-    def getRenderState(self) -> dict[Any, Any]:
-        return {}

@@ -55,14 +55,14 @@ def gui_mode(app: App, state: AppState, renderer: CursesRenderer, sniffer_messag
 
             renderer.erase()
             renderer.render_screen(state) # 
-            renderer.render_header(app.getRenderState()) # app state
-            renderer.render_footer()
+            renderer.render_header(app)
+            renderer.render_footer(app)
             
         else:
             renderer.render_pause_overlay()
         
         if app.show_debug_menu:
-            renderer.render_debug_menu()
+            renderer.render_debug_menu(app)
         
         renderer.refresh()
         renderer.handle_input(toggle_pause_func=app.togglePause, stop_app_func=app.stop) # pause, refresh (state), toggle mode

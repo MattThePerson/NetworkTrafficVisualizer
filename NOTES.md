@@ -65,5 +65,9 @@ QUESTIONS:
 # PORTS MODE
 - number of ports = 65_536 == 2^16 == 0x10000
 - eg. 64 pages of 1024 ports each
-- size of terminal in vertical = 96x116
-- 52x210
+- vertical term = 96x116
+- horizontal term = 52x210
+
+
+# PROBLEMS:
+- typing writes char in pause mode
