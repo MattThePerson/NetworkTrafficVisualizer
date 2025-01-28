@@ -1,38 +1,11 @@
 import argparse
 import multiprocessing
 import signal
-import time
-import scapy.all as scapy
-import sys
-
 from lib import AppState
 from lib import CursesRenderer
 from lib import App
+from lib import packet_sniffer
 
-
-### CALLBACK FUNCTIONS ###
-
-def keyboard_interrupt_handler(sig, frame, process, renderer):
-    print("Keyboard interrupt received. Closing the sniffer...")
-    process.terminate()
-    process.join()
-    print("Sniffer process terminated.")
-    renderer.end()
-    sys.exit(0)
-
-
-def handle_packet(packet, queue):
-    # print(packet.summary())
-    queue.put(packet)
-
-
-def packet_sniffer(queue):
-    scapy.sniff(
-        prn=lambda packet: handle_packet(packet, queue),
-        store=False,
-        filter=None,
-        iface=None,
-    )
 
 
 # MAIN
@@ -42,9 +15,12 @@ def main(args):
     state = AppState()
     renderer = CursesRenderer()
     queue = multiprocessing.Queue() # messages from sniffer process
-    sniffer_process = multiprocessing.Process(target=packet_sniffer, args=(queue,))
+    sniffer_process = multiprocessing.Process(
+        target=packet_sniffer,
+        args=(queue,)
+    )
 
-    signal.signal(signal.SIGINT, lambda sig, frame: keyboard_interrupt_handler(sig, frame, sniffer_process, renderer))
+    signal.signal(signal.SIGINT, lambda s, f: app.stop()) # handle ctrl+c
     
     # start shit
     sniffer_process.start()
@@ -57,19 +33,29 @@ def main(args):
         while not queue.empty():
             state.add_packet(queue.get_nowait())
         
-        state.update() # updates app state
+        if not app.paused:
+            state.update() # pass in app.time() ?
 
-        renderer.update(state) # 
-        renderer.update_header(app.getRenderState()) # app state
-        renderer.update_footer()
+            renderer.erase()
+            renderer.render_screen(state) # 
+            renderer.render_header(app.getRenderState()) # app state
+            renderer.render_footer()
+            
+        else:
+            renderer.render_pause_overlay()
         
-        renderer.handle_input()
-        renderer.refresh() 
+        if app.show_debug_menu:
+            renderer.render_debug_menu()
+        renderer.refresh()
+        renderer.handle_input(toggle_pause_func=app.togglePause, stop_app_func=app.stop) # pause, refresh (state), toggle mode
         
         app.sleep()
 
-    sniffer_process.join() # doesnt reach here
-    print('\nHEY, YOU REACHED ME!!!\n')
+    # end shit
+    renderer.end()
+    sniffer_process.terminate()
+    sniffer_process.join()
+    print('App closed. Goodbye!')
 
 
 
@@ -102,5 +88,5 @@ if __name__ == '__main__':
     parser.add_argument("--simulate-log", action='store_true', help="reads packets from log file and simulates their arrival")
 
     args = parser.parse_args()
-    print('running App ...')
+    # print('calling main() ...')
     main(args)
