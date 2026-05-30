@@ -2,9 +2,9 @@
 
 ## TODO
 
-- fix curser.addwstr() error
 - fix packets stopping flow when reached end
-- add method to log errors
+<!--- add method to log errors-->
+<!--- fix curser.addwstr() error-->
 <!--- Organize NOTES.md-->
 <!--- Write README-->
 

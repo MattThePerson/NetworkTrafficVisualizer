@@ -2,6 +2,9 @@ from typing import Any, Callable
 import time
 import sys
 
+from .app_state import AppState
+from .app import App
+
 try:
     import curses
 except ImportError:
@@ -58,19 +61,15 @@ class CursesRenderer():
         if self.initialized:
             curses.endwin() # dunno what this does
 
-    def render_screen(self, state: Any):
-        self.screen.addstr(1, 0, "size: " + str((self.rows, self.cols)))
-        self.screen.addstr(2, 0, "Try Russian text: Привет")
-        self.screen.addstr(3, 0, str(len(state.exchange_objects)))
-
+    def render_screen(self, state: AppState):
         for idx, eo in enumerate(state.exchange_objects[-80:]):
             color_pair_num = idx % len(self.colors) + 10
-            self.putstr(6+idx, 0, eo['show_data'], curses.color_pair(color_pair_num))
+            self.putstr(6+idx, 0, eo.show_data, curses.color_pair(color_pair_num))
 
-    def render_header(self, app: Any):
+    def render_header(self, app: App):
         ...
 
-    def render_footer(self, app: Any):
+    def render_footer(self, app: App):
         proc_tt_ms = round(app.compute_tt_mean * 1000, 1)
         ups = -1
         if app.update_count > 0:
