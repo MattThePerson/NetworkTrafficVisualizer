@@ -61,10 +61,22 @@ class CursesRenderer():
         if self.initialized:
             curses.endwin() # dunno what this does
 
+    IP_W = 15  # max IPv4 width
+
     def render_screen(self, state: AppState):
+        data_x = self.IP_W + 1
+        data_max_w = self.cols - 2 * (self.IP_W + 1) - 1
+
         for idx, eo in enumerate(state.exchange_objects[-80:]):
-            color_pair_num = idx % len(self.colors) + 10
-            self.putstr(6+idx, 0, eo.show_data, curses.color_pair(color_pair_num))
+            col = curses.color_pair(idx % len(self.colors) + 10)
+            row = 6 + idx
+
+            src = eo.src[:self.IP_W]
+            dst = eo.dst[:self.IP_W]
+
+            self.putstr(row, 0, src, col)
+            self.putstr(row, data_x, eo.show_data[:data_max_w], col)
+            self.putstr(row, self.cols - 1 - len(dst), dst, col)
 
     def render_header(self, app: App):
         ...

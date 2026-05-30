@@ -20,6 +20,8 @@ def scapy_packet_to_json(packet: scapy.Packet) -> dict[str, Any]:
     obj['len'] = len(bytes(packet))
     obj['hex'] = bytes(packet).hex()
     obj['json'] = packet_to_json(packet)
+    obj['src'] = packet['IP'].src if packet.haslayer('IP') else '?'
+    obj['dst'] = packet['IP'].dst if packet.haslayer('IP') else '?'
     return obj
 
 def packet_sniffer(queue: Any):

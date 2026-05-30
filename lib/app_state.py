@@ -13,6 +13,8 @@ class ExchangeObject:
     color: tuple[int, int, int]
     show_data: str
     show_idx: float # why float?
+    src: str
+    dst: str
 
 class AppState:
 
@@ -39,6 +41,8 @@ class AppState:
             color = self.get_random_color(),
             show_data = '',
             show_idx = 0.0,
+            src = packet.get('src', '?'),
+            dst = packet.get('dst', '?'),
         ))
 
 
