@@ -1,3 +1,13 @@
+# Notes
+
+## TODO
+
+- fix curser.addwstr() error
+- fix packets stopping flow when reached end
+- add method to log errors
+<!--- Organize NOTES.md-->
+<!--- Write README-->
+
 ## IDEAS
 
 - relationships (src, dst pairing) given a line and a color in the terminal
@@ -38,36 +48,13 @@ QUESTIONS:
     import ipaddress
     ipaddress.ip_address(ip).is_private
 
-# Options
---iface
---filter
---protocol
---port
---direction  // incoming or outgoing packets
---packets-larger-than
---packets-smaller-than
+## PORTS MODE
 
---no-ip-resolve  // dont reverse DNS resolve IPs
---vertical (maybe not)
---text-mode  // list connections like wireshark
---fade-time
---byte-mode  // represents data stream as bytes instead of bits
---max-exchange-stacking  // max thickness of a 'relationship'
---non-stacking-mode  // don't group (stack) exchanges in same relationship
-
---log-file  // 
---pcap  // Export to a .pcap file for later analysis in Wireshark
---list-ifs
---simulate-log  // reads packets from log file and simulates their arrival
-
-
-
-# PORTS MODE
 - number of ports = 65_536 == 2^16 == 0x10000
 - eg. 64 pages of 1024 ports each
 - vertical term = 96x116
 - horizontal term = 52x210
 
+## PROBLEMS:
 
-# PROBLEMS:
 - typing writes char in pause mode

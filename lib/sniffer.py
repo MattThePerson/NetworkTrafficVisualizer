@@ -2,7 +2,6 @@ from typing import Any
 import scapy.all as scapy
 import json
 
-
 def packet_to_json(packet: scapy.Packet) -> dict[str, Any] | None:
     obj = None
     for layer in reversed(packet.layers()):
@@ -12,7 +11,6 @@ def packet_to_json(packet: scapy.Packet) -> dict[str, Any] | None:
         obj = curr_obj
     obj = json.loads(json.dumps(obj, default=str))
     return obj
-
 
 def scapy_packet_to_json(packet: scapy.Packet) -> dict[str, Any]:
     obj: dict[str, Any] = {}
@@ -24,13 +22,12 @@ def scapy_packet_to_json(packet: scapy.Packet) -> dict[str, Any]:
     obj['json'] = packet_to_json(packet)
     return obj
 
-
 def packet_sniffer(queue: Any):
     def handle_packet(packet: scapy.Packet):
         packet_obj = scapy_packet_to_json(packet)
         if packet_obj:
             queue.put(packet_obj)
-    
+
     scapy.sniff(
         prn=handle_packet,
         store=False,

@@ -1,21 +1,19 @@
-from typing import Any
 import numpy as np
 import time
 
 class App:
-    
+
     def __init__(self, ups_target: int):
         self.ups_target: int = ups_target
         self.is_running = True
         self.paused = False
         self.show_debug_menu = False
         self.update_count = 0
-        
+
         self.start_time: float = 0
         self.last_wakeup_time: float
         self.compute_tt_arr: list[float] = [0] # time taken in seconds to
         self.compute_tt_mean: float = 0
-
 
     def start(self):
         self.start_time = time.time()
@@ -24,10 +22,8 @@ class App:
     def stop(self):
         self.is_running = False
 
-
     def running(self):
         return self.is_running
-
 
     def sleep(self):
         comp_tt = time.time() - self.last_wakeup_time
