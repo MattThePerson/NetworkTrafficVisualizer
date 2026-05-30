@@ -8,7 +8,27 @@ Your computer is constantly making connections on the network. This TUI (Termina
 
 ## Running
 
-Because this tool _sniffs_ network packages it requires admin privelages. On Windows you need to open a terminal in Admin Mode, then you can run main.py. On Linux use `sudo ./run.sh` (may need to edit privelages with `chmod +x run.sh`). 
+Because this tool sniffs network packets it requires admin privileges.
+
+**First-time setup** — run once from the project root to create a virtual environment and install dependencies:
+
+```bash
+# Linux / macOS
+./tools/install.sh
+
+# Windows (PowerShell)
+.\tools\install.ps1
+```
+
+**Run the app** — requires elevated privileges:
+
+```bash
+# Linux / macOS
+sudo ./tools/run.sh
+
+# Windows (PowerShell — open as Administrator)
+.\tools\run.ps1
+```
 
 ## Options
 
