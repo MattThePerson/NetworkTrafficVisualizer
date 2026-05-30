@@ -3,12 +3,19 @@ import argparse
 from multiprocessing import Process, Queue
 import signal
 import time
+import logging
 
 from lib import (
     AppState,
     CursesRenderer,
     App,
     packet_sniffer,
+)
+
+logging.basicConfig(
+    filename='debug.log',
+    level=logging.DEBUG,
+    format='%(asctime)s [%(levelname)s] %(message)s',
 )
 
 # GUI MODE
@@ -19,34 +26,37 @@ def gui_mode(app: App, state: AppState, renderer: CursesRenderer, sniffer_messag
     renderer.init()
     app.start()
 
-    # update loop
-    while app.running():
+    try:
+        # update loop
+        while app.running():
 
-        while not sniffer_messages.empty():
-            state.add_packet(sniffer_messages.get_nowait()) # why nowait?
+            while not sniffer_messages.empty():
+                state.add_packet(sniffer_messages.get_nowait()) # why nowait?
 
-        if not app.paused:
-            state.update() # pass in app.time() ?
+            if not app.paused:
+                state.update() # pass in app.time() ?
 
-            renderer.erase()
-            renderer.render_screen(state)
-            renderer.render_header(app)
-            renderer.render_footer(app)
+                renderer.erase()
+                renderer.render_screen(state)
+                renderer.render_header(app)
+                renderer.render_footer(app)
 
-        else:
-            renderer.render_pause_overlay()
+            else:
+                renderer.render_pause_overlay()
 
-        if app.show_debug_menu:
-            renderer.render_debug_menu(app)
+            if app.show_debug_menu:
+                renderer.render_debug_menu(app)
 
-        renderer.refresh()
-        renderer.handle_input(toggle_pause_func=app.togglePause, stop_app_func=app.stop) # pause, refresh (state), toggle mode
+            renderer.refresh()
+            renderer.handle_input(toggle_pause_func=app.togglePause, stop_app_func=app.stop) # pause, refresh (state), toggle mode
 
-        app.sleep()
+            app.sleep()
 
-    # end shit
-    renderer.end()
-    return
+    except Exception:
+        logging.exception('Unhandled exception in gui_mode')
+        raise
+    finally:
+        renderer.end()
 
 # TEXT MODE
 def text_mode(sniffer_messages: Any):

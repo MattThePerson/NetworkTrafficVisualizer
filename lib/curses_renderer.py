@@ -90,6 +90,8 @@ class CursesRenderer():
             return
         if y < 0:   y = self.rows + y
         if x < 0:   x = self.cols + x
+        if y < 0 or y >= self.rows or x < 0 or x >= self.cols - 1:
+            return
         to_write = str(to_write)[:(self.cols-1-x)]
         args = (y, x, to_write, col) if col else (y, x, to_write)
         self.screen.addstr(*args) # type: ignore
